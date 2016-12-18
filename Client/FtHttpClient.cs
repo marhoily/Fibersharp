@@ -21,9 +21,9 @@ namespace Client
             return Post("api/graph/node", coordinates);
         }
 
-        public void UpdateNode(Node node)
+        public Task UpdateNode(Node node)
         {
-            Put($"api/graph/node/{node.Id}", node);
+            return Put($"api/graph/node/{node.Id}", node);
         }
         public Task RemoveNode(int id)
         {
@@ -49,10 +49,10 @@ namespace Client
                     Encoding.UTF8, "application/json"));
             result.EnsureSuccessStatusCode();
             var response = await result.Content.ReadAsStringAsync();
-            return Int32.Parse(response);
+            return int.Parse(response);
         }
 
-        private async void Put<T>(string url, T body)
+        private async Task Put<T>(string url, T body)
         {
             var result = await _http.PutAsync(url,
                 new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json"));

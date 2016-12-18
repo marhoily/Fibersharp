@@ -43,25 +43,33 @@ namespace Fibertest.Datacenter.Web.Controllers
             using (var dbGraphContext = new DbGraphContext(_options))
             {
                 var nodes = await dbGraphContext.Nodes.ToListAsync();
-                return new { Nodes = nodes.Select(n => new
-                                 { Coordinates = new { n.Latitude, n.Longitude } } ) };
+                return new
+                {
+                    Nodes = nodes.Select(n => new
+                    {
+                        n.Title,
+                        Coordinates = new {n.Latitude, n.Longitude}
+                    })
+                };
             }
         }
 
 
         /// <summary>Put used to change existing entity</summary>
-        [Route("api/graph/node/id")]
-        public async void Put(int id, [FromBody] NodeArg arg)
+        [Route("api/graph/node/{id}")]
+        public async Task<IHttpActionResult> Put(int id, [FromBody] NodeArg arg)
         {
             _log.Information("change node with {id}", id);
-            using (var dbGraphContext = new DbGraphContext(_options))
+            using (var db = new DbGraphContext(_options))
             {
-                var node = dbGraphContext.Nodes.First(n => n.Id == id);
+                var node = await db.Nodes.SingleOrDefaultAsync(n => n.Id == id);
+                if (node == null) return BadRequest("node is not found");
                 node.Title = arg.Title;
-                node.Latitude = arg.Coors.Latitude;
-                node.Longitude = arg.Coors.Longitude;
-                await dbGraphContext.SaveChangesAsync();
+                node.Latitude = arg.Coordinates.Latitude;
+                node.Longitude = arg.Coordinates.Longitude;
+                await db.SaveChangesAsync();
             }
+            return Ok();
         }
 
 

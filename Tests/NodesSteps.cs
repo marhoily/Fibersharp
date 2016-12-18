@@ -19,6 +19,13 @@ namespace Tests
             var node = _host.Client.CreateNode(new Coordinates(latitude, longitude));
             node.Wait();
         }
+        [Given(@"I call UpdateNode")]
+        public void GivenICallUpdateNode(string multilineText)
+        {
+            _host.Client.UpdateNode(
+                JsonConvert.DeserializeObject<Node>(multilineText))
+                .Wait();
+        }
 
         [When(@"I call GetGraph\(\)")]
         public void GetGraph()

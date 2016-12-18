@@ -16,6 +16,6 @@
         /// <summary>
         /// 
         /// </summary>
-        public CoordinatesArg Coors { get; set; }
+        public CoordinatesArg Coordinates { get; set; }
     }
 }
